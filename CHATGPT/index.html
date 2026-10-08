@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Lunaria Books</title>
+
+    <meta
+        name="description"
+        content="Lunaria Books - descubra novos livros, autores e histórias."
+    >
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="header">
+
+        <div class="header-container">
+
+            <a href="#" class="logo">
+                <span class="logo-symbol">☾</span>
+                <span>Lunaria</span>
+            </a>
+
+            <div class="search-container">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Procure por um livro, autor..."
+                    autocomplete="off"
+                >
+
+                <button id="searchButton">
+                    Buscar
+                </button>
+
+            </div>
+
+            <nav class="navigation">
+
+                <button
+                    class="icon-button"
+                    id="themeButton"
+                    aria-label="Alterar tema"
+                    title="Alterar tema"
+                >
+                    <i class="fa-regular fa-moon"></i>
+                </button>
+
+                <button
+                    class="icon-button"
+                    id="favoritesButton"
+                    aria-label="Favoritos"
+                    title="Meus favoritos"
+                >
+                    <i class="fa-regular fa-heart"></i>
+                </button>
+
+                <button
+                    class="menu-button"
+                    id="menuButton"
+                    aria-label="Abrir menu"
+                >
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= MOBILE MENU ================= -->
+
+    <div class="mobile-menu" id="mobileMenu">
+
+        <button data-section="home">
+            <i class="fa-solid fa-house"></i>
+            Início
+        </button>
+
+        <button data-section="favorites">
+            <i class="fa-regular fa-heart"></i>
+            Favoritos
+        </button>
+
+        <button data-section="discover">
+            <i class="fa-solid fa-compass"></i>
+            Descobrir
+        </button>
+
+    </div>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main>
+
+        <!-- ================= HERO ================= -->
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <span class="hero-label">
+                    <i class="fa-solid fa-sparkles"></i>
+                    Seu próximo universo começa aqui
+                </span>
+
+                <h1>
+                    Encontre histórias
+                    <span>que ficam com você.</span>
+                </h1>
+
+                <p>
+                    Explore milhares de livros, descubra novos autores
+                    e encontre aquela história perfeita para o seu momento.
+                </p>
+
+                <button class="primary-button" id="exploreButton">
+                    Explorar livros
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+            </div>
+
+            <div class="hero-decoration">
+
+                <div class="floating-card card-one">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+
+                <div class="floating-card card-two">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+
+                <div class="hero-circle"></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= CATEGORIES ================= -->
+
+        <section class="categories-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="small-label">EXPLORE</span>
+
+                    <h2>
+                        O que você quer ler?
+                    </h2>
+                </div>
+
+            </div>
+
+            <div class="category-list">
+
+                <button class="category active" data-query="fiction">
+                    <span>📚</span>
+                    Ficção
+                </button>
+
+                <button class="category" data-query="romance">
+                    <span>♡</span>
+                    Romance
+                </button>
+
+                <button class="category" data-query="fantasy">
+                    <span>✦</span>
+                    Fantasia
+                </button>
+
+                <button class="category" data-query="mystery">
+                    <span>☽</span>
+                    Mistério
+                </button>
+
+                <button class="category" data-query="science fiction">
+                    <span>✧</span>
+                    Sci-Fi
+                </button>
+
+                <button class="category" data-query="self help">
+                    <span>☀</span>
+                    Desenvolvimento
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= FEATURED ================= -->
+
+        <section class="books-section" id="featuredSection">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="small-label">
+                        SELEÇÃO LUNARIA
+                    </span>
+
+                    <h2>
+                        Descobertas para você
+                    </h2>
+                </div>
+
+                <button class="see-all" id="seeAllFeatured">
+                    Ver todos
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+            </div>
+
+            <div
+                class="books-grid"
+                id="featuredBooks"
+            >
+                <div class="loading">
+                    <div class="loader"></div>
+                    <p>Buscando histórias...</p>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ================= POPULAR ================= -->
+
+        <section class="books-section soft-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="small-label">
+                        MAIS PROCURADOS
+                    </span>
+
+                    <h2>
+                        Queridinhos dos leitores
+                    </h2>
+                </div>
+
+            </div>
+
+            <div
+                class="books-grid"
+                id="popularBooks"
+            >
+                <div class="loading">
+                    <div class="loader"></div>
+                    <p>Carregando livros...</p>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ================= SEARCH RESULTS ================= -->
+
+        <section
+            class="books-section search-results-section"
+            id="searchResultsSection"
+            hidden
+        >
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="small-label">
+                        RESULTADOS
+                    </span>
+
+                    <h2 id="resultsTitle">
+                        Resultados da busca
+                    </h2>
+                </div>
+
+            </div>
+
+            <div
+                class="books-grid"
+                id="searchResults"
+            ></div>
+
+        </section>
+
+
+        <!-- ================= FAVORITES ================= -->
+
+        <section
+            class="books-section"
+            id="favoritesSection"
+            hidden
+        >
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="small-label">
+                        SUA ESTANTE
+                    </span>
+
+                    <h2>
+                        Livros favoritos
+                    </h2>
+                </div>
+
+            </div>
+
+            <div
+                class="books-grid"
+                id="favoriteBooks"
+            ></div>
+
+        </section>
+
+
+        <!-- ================= NEWSLETTER ================= -->
+
+        <section class="newsletter">
+
+            <div class="newsletter-icon">
+                ✦
+            </div>
+
+            <div class="newsletter-content">
+
+                <span class="small-label">
+                    CLUBE LUNARIA
+                </span>
+
+                <h2>
+                    Histórias novas, direto para você.
+                </h2>
+
+                <p>
+                    Receba sugestões de leitura e descubra livros
+                    que combinam com seus interesses.
+                </p>
+
+            </div>
+
+            <form class="newsletter-form" id="newsletterForm">
+
+                <input
+                    type="email"
+                    placeholder="Seu melhor e-mail"
+                    required
+                >
+
+                <button type="submit">
+                    Quero participar
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= BOOK MODAL ================= -->
+
+    <div
+        class="modal-overlay"
+        id="bookModal"
+        aria-hidden="true"
+    >
+
+        <div class="book-modal">
+
+            <button
+                class="close-modal"
+                id="closeModal"
+                aria-label="Fechar"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div
+                class="modal-content"
+                id="modalContent"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= TOAST ================= -->
+
+    <div
+        class="toast"
+        id="toast"
+    >
+        <i class="fa-solid fa-check"></i>
+        <span id="toastMessage">
+            Livro adicionado aos favoritos.
+        </span>
+    </div>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-container">
+
+            <div class="footer-brand">
+
+                <a href="#" class="logo">
+                    <span class="logo-symbol">☾</span>
+                    <span>Lunaria</span>
+                </a>
+
+                <p>
+                    Um cantinho para quem acredita que
+                    toda boa história merece ser encontrada.
+                </p>
+
+            </div>
+
+            <div class="footer-links">
+
+                <div>
+                    <h3>Explorar</h3>
+                    <a href="#">Livros</a>
+                    <a href="#">Autores</a>
+                    <a href="#">Categorias</a>
+                </div>
+
+                <div>
+                    <h3>Lunaria</h3>
+                    <a href="#">Sobre nós</a>
+                    <a href="#">Comunidade</a>
+                    <a href="#">Contato</a>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>
+                © 2026 Lunaria Books · Feito para amantes de histórias.
+            </p>
+        </div>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

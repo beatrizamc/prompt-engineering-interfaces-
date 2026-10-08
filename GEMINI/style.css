@@ -1,0 +1,517 @@
+/* ==========================================================================
+   VARIAVEIS E PALETA DE CORES (Aesthetic Dark Violet)
+   ========================================================================== */
+   :root {
+    --bg-main: #0f0e17;
+    --bg-card: #161524;
+    --bg-card-hover: #1f1d33;
+    --bg-input: #1a1829;
+    
+    --primary: #8b5cf6;
+    --primary-hover: #7c3aed;
+    --accent: #ec4899;
+    --accent-soft: rgba(236, 72, 153, 0.15);
+    
+    --text-title: #f3f4f6;
+    --text-body: #a1a1aa;
+    --text-muted: #71717a;
+    
+    --border-color: #27273a;
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    
+    --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* ==========================================================================
+     RESET & BASE
+     ========================================================================== */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-body);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    font-family: inherit;
+  }
+  
+  /* ==========================================================================
+     NAVBAR
+     ========================================================================== */
+  .navbar {
+    background-color: rgba(22, 21, 36, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0.8rem 1.5rem;
+  }
+  
+  .nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  
+  .logo-icon {
+    font-size: 1.6rem;
+    color: var(--primary);
+  }
+  
+  .brand-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-title);
+    letter-spacing: -0.5px;
+  }
+  
+  .brand-name span {
+    color: var(--accent);
+  }
+  
+  .search-bar {
+    flex: 1;
+    max-width: 500px;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-icon {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-muted);
+  }
+  
+  .search-bar input {
+    width: 100%;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 3rem 0.75rem 2.8rem;
+    border-radius: var(--radius-md);
+    color: var(--text-title);
+    font-size: 0.9rem;
+    transition: var(--transition);
+  }
+  
+  .search-bar input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+  }
+  
+  .search-bar button {
+    position: absolute;
+    right: 0.4rem;
+    background-color: var(--primary);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+  }
+  
+  .search-bar button:hover {
+    background-color: var(--primary-hover);
+  }
+  
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .nav-link {
+    background: transparent;
+    color: var(--text-body);
+    font-weight: 500;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+  }
+  
+  .nav-link:hover {
+    color: var(--text-title);
+  }
+  
+  .btn-primary {
+    background-color: var(--primary);
+    color: #fff;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    transition: var(--transition);
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+  
+  /* ==========================================================================
+     LAYOUT PRINCIPAL
+     ========================================================================== */
+  .main-layout {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2rem;
+  }
+  
+  /* ==========================================================================
+     ANÚNCIOS / HERO
+     ========================================================================== */
+  .announcement-card {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.05) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .announcement-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+  }
+  
+  .announcement-header h3 {
+    font-size: 1rem;
+    color: var(--text-title);
+  }
+  
+  .announcement-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+  }
+  
+  .announcement-list strong {
+    color: var(--text-title);
+  }
+  
+  /* ==========================================================================
+     SEÇÕES E GRIDS DE LIVROS
+     ========================================================================== */
+  .books-section {
+    margin-bottom: 3rem;
+  }
+  
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .section-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-title);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .text-accent {
+    color: var(--accent);
+  }
+  
+  .categories-tags {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .tag {
+    background-color: var(--bg-card);
+    color: var(--text-body);
+    border: 1px solid var(--border-color);
+    padding: 0.35rem 0.8rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: var(--transition);
+  }
+  
+  .tag.active, .tag:hover {
+    background-color: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+  
+  .books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.25rem;
+  }
+  
+  /* CARD DE LIVRO */
+  .book-card {
+    background-color: var(--bg-card);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .book-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(139, 92, 246, 0.4);
+    box-shadow: var(--shadow);
+  }
+  
+  .cover-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2/3;
+    overflow: hidden;
+    background-color: #27273a;
+  }
+  
+  .book-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+  }
+  
+  .book-card:hover .book-cover {
+    transform: scale(1.05);
+  }
+  
+  .rank-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+  
+  .book-info {
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  
+  .book-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-title);
+    margin-bottom: 0.25rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.25;
+  }
+  
+  .book-author {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .book-footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--text-body);
+  }
+  
+  .rating {
+    color: #f59e0b;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-weight: 600;
+  }
+  
+  /* ==========================================================================
+     BARRA LATERAL
+     ========================================================================== */
+  .content-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  
+  .action-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: var(--transition);
+    cursor: pointer;
+  }
+  
+  .action-card:hover {
+    background-color: var(--bg-card-hover);
+    border-color: var(--primary);
+  }
+  
+  .action-icon {
+    font-size: 1.5rem;
+    color: var(--primary);
+  }
+  
+  .action-card.discord .action-icon {
+    color: #5865F2;
+  }
+  
+  .action-card h4 {
+    font-size: 0.9rem;
+    color: var(--text-title);
+  }
+  
+  .action-card p {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  
+  .sidebar-widget {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+  }
+  
+  .widget-title {
+    font-size: 1rem;
+    color: var(--text-title);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .recent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  
+  .recent-item {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    transition: var(--transition);
+    cursor: pointer;
+  }
+  
+  .recent-item:hover .recent-title {
+    color: var(--primary);
+  }
+  
+  .recent-thumb {
+    width: 48px;
+    height: 68px;
+    border-radius: 6px;
+    object-fit: cover;
+    background-color: #27273a;
+    flex-shrink: 0;
+  }
+  
+  .recent-details {
+    overflow: hidden;
+  }
+  
+  .recent-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-title);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: var(--transition);
+  }
+  
+  .recent-meta {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+  }
+  
+  /* SPINNER DE CARREGAMENTO */
+  .loading-spinner {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+  }
+  
+  /* RESPONSIVIDADE */
+  @media (max-width: 900px) {
+    .main-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .nav-container {
+      flex-wrap: wrap;
+    }
+    .search-bar {
+      order: 3;
+      max-width: 100%;
+      margin-top: 0.5rem;
+    }
+    .books-grid {
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    }
+  }

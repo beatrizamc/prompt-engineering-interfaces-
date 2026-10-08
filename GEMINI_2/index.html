@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aetheria | Sua Plataforma de Leitura Obscura & Elegante</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Ícones Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- CSS Personalizado -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#0f111a] text-slate-200 font-sans antialiased selection:bg-purple-500 selection:text-white min-h-screen flex flex-col">
+
+  <!-- Header / Navbar -->
+  <header class="sticky top-0 z-50 bg-[#161824]/90 backdrop-blur-md border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-2 font-bold text-xl tracking-wider text-white group">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-600 to-indigo-400 flex items-center justify-center text-white shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform">
+          <i class="fa-solid fa-feather-pointed text-sm"></i>
+        </div>
+        <span>AETHERIA</span>
+      </a>
+
+      <!-- Search Bar -->
+      <div class="flex-1 max-w-md hidden sm:block">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+          <input type="text" id="searchInput" placeholder="Buscar mangás, manhwas, autores..." class="w-full bg-[#0d0e15] text-sm text-slate-200 pl-10 pr-4 py-2 rounded-xl border border-slate-800 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-slate-500">
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-3">
+        <button class="hidden md:flex items-center gap-2 text-xs font-semibold text-slate-300 hover:text-white bg-slate-800/60 hover:bg-slate-800 px-3 py-2 rounded-lg border border-slate-700/50 transition-all">
+          <i class="fa-solid fa-compass text-purple-400"></i>
+          <span>Explorar</span>
+        </button>
+        <button id="themeToggleBtn" class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/60 transition-colors" title="Tema">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <button class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-md shadow-purple-900/30 transition-all hover:shadow-purple-700/40">
+          Entrar
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full grid grid-cols-1 lg:grid-cols-4 gap-8">
+    
+    <!-- Left Column: News Banner & Primary Lists (3/4 Grid) -->
+    <section class="lg:col-span-3 space-y-8">
+      
+      <!-- Announcement Banner -->
+      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-950/60 via-[#181a29] to-[#12131f] border border-purple-500/20 p-6 shadow-xl">
+        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="space-y-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+              <i class="fa-solid fa-sparkles text-[10px]"></i> Novidades da Comunidade
+            </span>
+            <h2 class="text-lg font-bold text-white tracking-wide">Bem-vindo à nova versão do Aetheria!</h2>
+            <p class="text-xs text-slate-400 max-w-xl leading-relaxed">
+              Sincronização automática com AniList ativada, leituras sem anúncios e modo de alta definição disponível para todos os leitores.
+            </p>
+          </div>
+          <a href="#" class="shrink-0 text-xs font-semibold text-purple-300 hover:text-purple-200 bg-purple-500/20 hover:bg-purple-500/30 px-4 py-2.5 rounded-xl border border-purple-500/30 transition-all flex items-center gap-2">
+            <span>Comunidade Discord</span>
+            <i class="fa-brands fa-discord"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Section: Mais Populares -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-1.5 h-5 bg-purple-500 rounded-full"></div>
+            <h3 class="text-base font-bold text-white tracking-wide">Mais Populares no Momento</h3>
+          </div>
+          <div class="flex items-center gap-1">
+            <button id="prevPopular" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+            <button id="nextPopular" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+          </div>
+        </div>
+
+        <!-- Cards Carousel / Grid -->
+        <div id="popularGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          <!-- Gerado dinamicamente via JavaScript -->
+        </div>
+      </div>
+
+      <!-- Section: Lançamentos Recentes -->
+      <div class="space-y-4 pt-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-1.5 h-5 bg-indigo-500 rounded-full"></div>
+            <h3 class="text-base font-bold text-white tracking-wide">Capítulos Atualizados</h3>
+          </div>
+          <a href="#" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors font-medium">Ver todos</a>
+        </div>
+
+        <div id="latestGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Gerado dinamicamente via JavaScript -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Right Sidebar: Quick Updates & App Links (1/4 Grid) -->
+    <aside class="space-y-6">
+      
+      <!-- Quick App Download Widget -->
+      <div class="bg-[#161824] p-4 rounded-xl border border-slate-800 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0 text-lg">
+          <i class="fa-solid fa-mobile-screen-button"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+          <h4 class="text-xs font-bold text-white truncate">Aplicativo Mobile</h4>
+          <p class="text-[11px] text-slate-400 truncate">Baixe o PWA para iOS e Android</p>
+        </div>
+        <button class="text-xs text-purple-400 hover:text-purple-300 font-semibold shrink-0">Baixar</button>
+      </div>
+
+      <!-- Tabbed Mini List: Adicionados Recentemente -->
+      <div class="bg-[#161824] rounded-xl border border-slate-800 p-4 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h3 class="text-xs font-bold text-slate-200 tracking-wider uppercase">Recém Adicionados</h3>
+          <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full">Hoje</span>
+        </div>
+
+        <div id="sidebarList" class="space-y-3">
+          <!-- Gerado dinamicamente via JavaScript -->
+        </div>
+      </div>
+
+      <!-- Share Box -->
+      <div class="bg-[#161824] rounded-xl border border-slate-800 p-4 space-y-3">
+        <h4 class="text-xs font-semibold text-slate-300">Compartilhe a plataforma</h4>
+        <div class="flex items-center gap-2">
+          <button class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition-colors"><i class="fa-brands fa-x-twitter"></i></button>
+          <button class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition-colors"><i class="fa-brands fa-whatsapp"></i></button>
+          <button class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition-colors"><i class="fa-brands fa-telegram"></i></button>
+          <button id="copyLinkBtn" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition-colors" title="Copiar Link"><i class="fa-solid fa-link"></i></button>
+        </div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-[#0b0c13] border-t border-slate-800/60 py-8 mt-12 text-slate-500 text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-6 h-6 rounded bg-purple-600 flex items-center justify-center text-white text-xs">
+          <i class="fa-solid fa-feather-pointed"></i>
+        </div>
+        <span class="text-slate-300 font-semibold">AETHERIA</span>
+        <span>&copy; 2026 - Todos os direitos reservados.</span>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="#" class="hover:text-slate-300 transition-colors">Termos de Uso</a>
+        <a href="#" class="hover:text-slate-300 transition-colors">Privacidade</a>
+        <a href="#" class="hover:text-slate-300 transition-colors">Contato</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript Principal -->
+  <script src="script.js"></script>
+</body>
+</html>

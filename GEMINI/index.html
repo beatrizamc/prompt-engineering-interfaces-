@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumina Books — Seu Universo Literário</title>
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- CABEÇALHO / NAVBAR -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <i class="fa-solid fa-book-open-reader logo-icon"></i>
+        <span class="brand-name">Lumina<span>Books</span></span>
+      </div>
+
+      <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Pesquisar livros, autores, gêneros..." />
+        <button id="searchBtn"><i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+
+      <div class="nav-actions">
+        <button class="nav-link"><i class="fa-solid fa-compass"></i> Explorar</button>
+        <button class="btn-primary"><i class="fa-solid fa-user"></i> Entrar</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="main-layout">
+    
+    <!-- COLUNA PRINCIPAL (ESQUERDA) -->
+    <section class="content-primary">
+      
+      <!-- CARD DE ANÚNCIOS / NOVIDADES -->
+      <div class="announcement-card">
+        <div class="announcement-header">
+          <i class="fa-solid fa-bullhorn"></i>
+          <h3>Destaques & Comunicados</h3>
+        </div>
+        <ul class="announcement-list">
+          <li>✨ <strong>Nova Integração:</strong> Sincronize sua leitura diretamente com a Google Books API.</li>
+          <li>💜 <strong>Comunidade Lumina:</strong> Avalie, salve seus livros favoritos e monte sua estante virtual.</li>
+          <li>📚 <strong>Clube do Livro:</strong> Participe das discussões mensais do nosso servidor no Discord.</li>
+        </ul>
+      </div>
+
+      <!-- SEÇÃO 1: MAIS POPULARES -->
+      <section class="books-section">
+        <div class="section-header">
+          <h2><i class="fa-solid fa-fire text-accent"></i> Mais Populares do Mês</h2>
+          <div class="categories-tags">
+            <button class="tag active" data-subject="fiction">Ficção</button>
+            <button class="tag" data-subject="fantasy">Fantasia</button>
+            <button class="tag" data-subject="romance">Romance</button>
+            <button class="tag" data-subject="mystery">Mistério</button>
+          </div>
+        </div>
+
+        <div class="books-grid" id="popularBooksGrid">
+          <div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> Carregando livros...</div>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 2: RECOMENDADOS -->
+      <section class="books-section">
+        <div class="section-header">
+          <h2><i class="fa-solid fa-star text-accent"></i> Mais Bem Avaliados</h2>
+        </div>
+
+        <div class="books-grid" id="recommendedBooksGrid">
+          <div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> Carregando recomendações...</div>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- BARRA LATERAL (DIREITA) -->
+    <aside class="content-sidebar">
+      
+      <!-- CARDS DE AÇÃO RÁPIDA -->
+      <div class="action-card">
+        <i class="fa-solid fa-mobile-screen-button action-icon"></i>
+        <div>
+          <h4>Baixe o App Lumina</h4>
+          <p>Disponível para iOS e Android</p>
+        </div>
+      </div>
+
+      <div class="action-card discord">
+        <i class="fa-brands fa-discord action-icon"></i>
+        <div>
+          <h4>Comunidade Discord</h4>
+          <p>Troque ideias sobre suas leituras</p>
+        </div>
+      </div>
+
+      <!-- LISTA SECUNDÁRIA (RECENTES / LANÇAMENTOS) -->
+      <div class="sidebar-widget">
+        <h3 class="widget-title"><i class="fa-solid fa-clock-rotate-left"></i> Adicionados Recentemente</h3>
+        <div class="recent-list" id="recentBooksList">
+          <div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+        </div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
