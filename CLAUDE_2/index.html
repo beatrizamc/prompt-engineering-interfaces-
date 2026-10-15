@@ -1,104 +1,87 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tinteiro · Descubra mangás, manhwas e manhuas</title>
-
+  <title>Mangará: descubra sua próxima leitura</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="style.css">
 </head>
+<body>
 
-<body class="app min-h-screen">
-  <header class="app-header sticky top-0 z-30">
-    <div class="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
-      <a href="./" class="logo flex items-center gap-2 font-display text-2xl font-extrabold" aria-label="Tinteiro, página inicial">
-        <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2c3.5 4.2 6 7.4 6 10.8A6 6 0 0 1 6 12.8C6 9.4 8.5 6.2 12 2Z"/></svg>
-        MangaTo
+  <header class="site-header sticky top-0 z-30">
+    <div class="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:gap-6">
+      <a href="#" class="logo font-display text-2xl" aria-label="Mangará, página inicial">
+        <span class="logo-flower" aria-hidden="true">✿</span>Mangará
       </a>
 
-      <form id="search-form" class="relative mx-auto min-w-0 flex-1 sm:max-w-xl" role="search">
-        <input id="search-input" class="field w-full" type="search" autocomplete="off"
-               placeholder="Buscar um título…" aria-label="Buscar títulos">
-      </form>
+      <label class="search flex flex-1 items-center gap-2 rounded-full px-4 py-2">
+        <span class="sr-only">Buscar</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="search" type="search" autocomplete="off" placeholder="Busque por título ou gênero" class="w-full bg-transparent outline-none">
+      </label>
 
-      <button id="favs-btn" class="btn btn-ghost" type="button">
-        Estante <span id="favs-count" class="count">0</span>
+      <button id="theme-btn" class="icon-btn" type="button" title="Trocar paleta de cores" aria-label="Trocar paleta de cores">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.8-.8 1.8-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5c0-4-4-7.2-9-7.2Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10.5" cy="7" r="1"/><circle cx="15.5" cy="7.5" r="1"/></svg>
       </button>
-      <button id="theme-btn" class="icon-btn" type="button" aria-label="Alternar tema claro/escuro">
-        <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-        <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+
+      <button id="follow-chip" class="btn-accent flex items-center gap-2 rounded-full px-4 py-2 font-bold" type="button" title="Mostrar só os títulos que você segue">
+        <span aria-hidden="true">♥</span>
+        <span>Seguindo <span id="follow-count">0</span></span>
       </button>
     </div>
   </header>
 
-  <main class="mx-auto grid max-w-7xl gap-10 px-4 py-8 lg:grid-cols-[minmax(0,1fr)_340px]">
-    <div class="min-w-0 space-y-12">
+  <main class="mx-auto grid max-w-7xl gap-10 px-4 py-8 lg:grid-cols-[minmax(0,1fr)_21rem]">
 
-      <section class="space-y-5">
-        <h1 class="font-display max-w-2xl text-3xl font-extrabold leading-tight sm:text-4xl">
-          Encontre a próxima história que você não vai conseguir largar.
-        </h1>
-        <div id="type-filter" class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por tipo">
-          <button class="chip" data-type="" aria-pressed="true">Todos</button>
-          <button class="chip" data-type="manga" aria-pressed="false">Mangá</button>
-          <button class="chip" data-type="manhwa" aria-pressed="false">Manhwa</button>
-          <button class="chip" data-type="manhua" aria-pressed="false">Manhua</button>
-        </div>
+    <div class="min-w-0 space-y-10">
+
+      <section class="notice rounded-2xl p-5" aria-labelledby="notice-title">
+        <h2 id="notice-title" class="font-display text-lg">Novidades do Mangará</h2>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li>Escolha sua paleta de cores no botão de pincel, ao lado da busca.</li>
+          <li>Toque no coração de um título para segui-lo e encontrá-lo depressa.</li>
+          <li>Use os filtros para ver só mangás, manhwas ou manhuas.</li>
+        </ul>
       </section>
 
-      <!-- Resultados de busca e estante (aparece sob demanda) -->
-      <section id="results" hidden aria-live="polite">
-        <div class="mb-4 flex items-center justify-between gap-4">
-          <h2 id="results-title" class="section-title"></h2>
-          <button id="results-close" class="btn btn-ghost" type="button">Fechar</button>
-        </div>
-        <div id="results-grid" class="grid-cards"></div>
-      </section>
+      <div id="type-filters" class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por tipo"></div>
 
       <section aria-labelledby="popular-title">
         <div class="mb-4 flex items-center justify-between">
-          <h2 id="popular-title" class="section-title">Em alta agora</h2>
+          <h2 id="popular-title" class="font-display text-2xl">Em alta esta semana</h2>
           <div class="flex gap-2">
-            <button class="icon-btn" data-scroll="popular-track" data-dir="-1" aria-label="Anterior">‹</button>
-            <button class="icon-btn" data-scroll="popular-track" data-dir="1" aria-label="Próximo">›</button>
+            <button class="icon-btn" type="button" data-scroll="-1" aria-label="Voltar">‹</button>
+            <button class="icon-btn" type="button" data-scroll="1" aria-label="Avançar">›</button>
           </div>
         </div>
-        <div id="popular-track" class="carousel" tabindex="0"></div>
+        <div id="popular-row" class="carousel flex gap-4 overflow-x-auto pb-3"></div>
       </section>
 
-      <section aria-labelledby="loved-title">
-        <div class="mb-4 flex items-center justify-between">
-          <h2 id="loved-title" class="section-title">Mais amados pelos leitores</h2>
-          <div class="flex gap-2">
-            <button class="icon-btn" data-scroll="loved-track" data-dir="-1" aria-label="Anterior">‹</button>
-            <button class="icon-btn" data-scroll="loved-track" data-dir="1" aria-label="Próximo">›</button>
-          </div>
-        </div>
-        <div id="loved-track" class="carousel" tabindex="0"></div>
+      <section aria-labelledby="all-title">
+        <h2 id="all-title" class="font-display mb-4 text-2xl">Todos os títulos</h2>
+        <div id="all-grid" class="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 xl:grid-cols-4"></div>
+        <p id="empty" class="empty hidden rounded-2xl p-8 text-center">
+          Nenhum título encontrado. Tente outro nome, ou limpe a busca e os filtros.
+        </p>
       </section>
     </div>
 
-    <aside class="panel self-start lg:sticky lg:top-24" aria-label="Novidades e séries completas">
-      <div class="tabs mb-3 flex gap-5" role="tablist">
-        <button role="tab" data-tab="recent" aria-selected="true">Novidades</button>
-        <button role="tab" data-tab="complete" aria-selected="false">Completos</button>
+    <aside class="min-w-0" aria-label="Lançamentos">
+      <div class="tabs mb-4 flex gap-2" role="tablist">
+        <button class="tab is-active" type="button" role="tab" data-tab="recent" aria-selected="true">Recentes</button>
+        <button class="tab" type="button" role="tab" data-tab="complete" aria-selected="false">Completos</button>
       </div>
-      <div id="side-list" class="space-y-1"></div>
+      <ul id="side-list" class="space-y-3"></ul>
     </aside>
   </main>
 
-  <footer class="mx-auto max-w-7xl px-4 pb-10 text-sm muted">
-    Dados do MyAnimeList, via Jikan API. O MangaTo ajuda a descobrir títulos; não hospeda capítulos.
+  <footer class="mx-auto max-w-7xl px-4 pb-10 text-sm footer-note">
+    Mangará é um projeto de estudo. Os títulos e capas são fictícios.
   </footer>
-
-  <dialog id="detail" aria-labelledby="detail-title">
-    <div id="detail-body"></div>
-  </dialog>
 
   <script src="script.js"></script>
 </body>
