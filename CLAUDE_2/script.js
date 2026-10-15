@@ -1,251 +1,193 @@
-(() => {
-  "use strict";
+"use strict";
 
-  const API = "https://api.jikan.moe/v4";
-  const $ = (sel, root = document) => root.querySelector(sel);
-  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
-  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+/* ---------- Dados (títulos fictícios) ---------- */
+// h = [matiz inicial, matiz final] do degradê da capa; popularidade = ordem na lista
+const COMICS = [
+  { id: 1,  title: "A Herdeira do Farol Silencioso", type: "Manhwa", genres: ["Fantasia", "Romance"], chapter: 56, ago: "1h",  complete: false, h: [335, 270] },
+  { id: 2,  title: "Receitas do Último Dragão",       type: "Mangá",  genres: ["Culinária", "Aventura"], chapter: 43, ago: "2h",  complete: false, h: [25, 350] },
+  { id: 3,  title: "O Jardim Entre Marés",            type: "Manhua", genres: ["Drama", "Slice of life"], chapter: 51, ago: "5h",  complete: false, h: [175, 215] },
+  { id: 4,  title: "Cartas para a Lua Nova",          type: "Mangá",  genres: ["Romance", "Fantasia"], chapter: 12, ago: "7h",  complete: true,  h: [255, 300] },
+  { id: 5,  title: "Guardiã da Biblioteca Errante",   type: "Manhwa", genres: ["Mistério", "Fantasia"], chapter: 20, ago: "9h",  complete: false, h: [45, 20] },
+  { id: 6,  title: "Quarto 404, Mundo Paralelo",      type: "Mangá",  genres: ["Comédia", "Isekai"], chapter: 88, ago: "12h", complete: false, h: [195, 240] },
+  { id: 7,  title: "Rainha do Café das Três",         type: "Manhua", genres: ["Comédia", "Romance"], chapter: 30, ago: "1d",  complete: true,  h: [15, 330] },
+  { id: 8,  title: "Samurai de Papel",                type: "Mangá",  genres: ["Ação", "Histórico"], chapter: 64, ago: "1d",  complete: false, h: [350, 20] },
+  { id: 9,  title: "Estrelas no Bolso",               type: "Manhwa", genres: ["Ficção científica"], chapter: 9,  ago: "2d",  complete: true,  h: [220, 280] },
+  { id: 10, title: "O Aprendiz do Vento Sul",         type: "Manhua", genres: ["Aventura", "Ação"], chapter: 101, ago: "2d", complete: false, h: [140, 190] },
+  { id: 11, title: "Doce Vingança de Domingo",        type: "Mangá",  genres: ["Drama", "Culinária"], chapter: 27, ago: "3d",  complete: false, h: [310, 350] },
+  { id: 12, title: "Nuvens para Alugar",              type: "Manhwa", genres: ["Slice of life"], chapter: 15, ago: "3d",  complete: true,  h: [200, 160] },
+];
 
-  const store = {
-    get(key, fallback) {
-      try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
-    },
-    set: (key, value) => localStorage.setItem(key, JSON.stringify(value)),
-  };
+const THEMES = ["ameixa", "oceano", "matcha"];
+const TYPES = ["Todos", "Mangá", "Manhwa", "Manhua"];
 
-  const state = {
-    type: "",
-    tab: "recent",
-    view: null, // "search" | "favs" | null
-    searchId: 0,
-    favs: store.get("tinteiro:favs", []),
-  };
-  const catalog = new Map(); // mal_id -> título, usado pela janela de detalhes
+/* ---------- Estado ---------- */
+const state = {
+  query: "",
+  type: "Todos",
+  tab: "recent",
+  onlyFollowing: false,
+  follows: new Set(load("mangara:follows", [])),
+};
 
-  const TYPES = { Manga: "Mangá", Manhwa: "Manhwa", Manhua: "Manhua", Novel: "Novel", "Light Novel": "Light novel", "One-shot": "One-shot", Doujinshi: "Doujinshi" };
-  const STATUS = { Publishing: "Em publicação", Finished: "Completo", "On Hiatus": "Em hiato", Discontinued: "Descontinuado", "Not yet published": "Em breve" };
+const $ = (sel) => document.querySelector(sel);
+const els = {
+  search: $("#search"),
+  filters: $("#type-filters"),
+  popular: $("#popular-row"),
+  grid: $("#all-grid"),
+  empty: $("#empty"),
+  side: $("#side-list"),
+  followChip: $("#follow-chip"),
+  followCount: $("#follow-count"),
+};
 
-  // ---------- Utilidades ----------
-  const esc = (s = "") => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const titleOf = (m) => m.title_english || m.title;
-  const coverOf = (m) => m.images?.webp?.large_image_url || m.images?.jpg?.large_image_url || "";
-  const typeOf = (m) => TYPES[m.type] || "Quadrinho";
-  const statusOf = (m) => STATUS[m.status] || m.status || "";
-  const infoOf = (m) => `${typeOf(m)}, ${m.chapters ? m.chapters + " cap." : statusOf(m)}`;
-  const isFav = (id) => state.favs.some((m) => m.mal_id === id);
+/* ---------- Armazenamento ---------- */
+function load(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
+  catch { return fallback; }
+}
+function save(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* sem armazenamento */ }
+}
 
-  // ---------- API ----------
-  // A Jikan limita ~3 requisições por segundo: as chamadas entram em fila.
-  async function request(path, retries = 2) {
-    const res = await fetch(API + path);
-    if (res.status === 429 && retries > 0) {
-      await wait(1200);
-      return request(path, retries - 1);
-    }
-    if (!res.ok) throw new Error(res.status);
-    return (await res.json()).data ?? [];
-  }
+/* ---------- Filtragem ---------- */
+function visibleComics() {
+  const q = state.query.trim().toLowerCase();
+  return COMICS.filter((c) =>
+    (state.type === "Todos" || c.type === state.type) &&
+    (!state.onlyFollowing || state.follows.has(c.id)) &&
+    (!q || c.title.toLowerCase().includes(q) || c.genres.some((g) => g.toLowerCase().includes(q)))
+  );
+}
 
-  let queue = Promise.resolve();
-  function api(path) {
-    const job = queue.then(() => request(path));
-    queue = job.catch(() => {}).then(() => wait(400));
-    return job;
-  }
+/* ---------- Templates ---------- */
+const coverStyle = (c) => `--h1:${c.h[0]};--h2:${c.h[1]}`;
 
-  // ---------- Templates ----------
-  const card = (m, rank) => `
-    <article>
-      <button class="card-btn" data-open="${m.mal_id}" aria-label="Abrir ${esc(titleOf(m))}">
-        <div class="cover">
-          <img src="${esc(coverOf(m))}" alt="" loading="lazy">
-          ${rank ? `<span class="rank" aria-label="Posição ${rank}">${rank}</span>` : ""}
-          ${m.score ? `<span class="score">★ ${m.score.toFixed(1)}</span>` : ""}
+function cardHTML(c, rank) {
+  const on = state.follows.has(c.id);
+  return `
+    <article class="card">
+      <div class="relative">
+        ${rank ? `<span class="rank">#${rank}</span>` : ""}
+        <button class="heart ${on ? "is-on" : ""}" type="button" data-follow="${c.id}"
+                aria-pressed="${on}" aria-label="Seguir ${c.title}">♥</button>
+        <div class="cover" style="${coverStyle(c)}">
+          <span class="cover-initial" aria-hidden="true">${c.title[0]}</span>
+          <span class="cover-genre">${c.genres.join(", ")}</span>
         </div>
-        <h3 class="card-title">${esc(titleOf(m))}</h3>
-        <p class="card-meta">${esc(infoOf(m))}</p>
-      </button>
-    </article>`;
-
-  const miniRow = (m) => `
-    <button class="mini" data-open="${m.mal_id}">
-      <img src="${esc(coverOf(m))}" alt="" loading="lazy">
-      <div class="min-w-0">
-        <h3>${esc(titleOf(m))}</h3>
-        <p>${esc(typeOf(m))}, ${esc(statusOf(m))}</p>
       </div>
-    </button>`;
+      <div class="card-meta"><span>Cap. ${c.chapter}</span><span>${c.type}</span></div>
+      <h3 class="card-title">${c.title}</h3>
+    </article>`;
+}
 
-  const skeletonCards = (n) => Array.from({ length: n }, () =>
-    `<div><div class="cover skeleton"></div><div class="line-skeleton"></div><div class="line-skeleton" style="width:60%"></div></div>`).join("");
+function sideItemHTML(c) {
+  const sub = state.tab === "complete" ? `Completo, ${c.chapter} capítulos` : `Cap. ${c.chapter}, há ${c.ago}`;
+  return `
+    <li class="side-item">
+      <div class="mini" style="${coverStyle(c)}" aria-hidden="true">${c.title[0]}</div>
+      <div class="min-w-0">
+        <div class="side-type">${c.type}</div>
+        <div class="side-title">${c.title}</div>
+        <div class="side-sub">${sub}</div>
+      </div>
+    </li>`;
+}
 
-  const skeletonRows = (n) => Array.from({ length: n }, () =>
-    `<div class="mini"><div class="thumb-skeleton"></div><div class="flex-1"><div class="line-skeleton"></div><div class="line-skeleton" style="width:55%"></div></div></div>`).join("");
+/* ---------- Renderização ---------- */
+function renderFilters() {
+  els.filters.innerHTML = TYPES.map((t) =>
+    `<button class="chip ${t === state.type ? "is-active" : ""}" type="button" data-type="${t}">${t}</button>`
+  ).join("");
+}
 
-  const notice = (text, retry = false) =>
-    `<div class="notice"><p>${text}</p>${retry ? `<button class="btn btn-ghost" data-retry>Tentar de novo</button>` : ""}</div>`;
+function renderLists() {
+  const list = visibleComics();
+  // O carrossel mostra os 8 primeiros da lista (que já está em ordem de popularidade)
+  els.popular.innerHTML = list.slice(0, 8).map((c, i) => cardHTML(c, i + 1)).join("");
+  els.grid.innerHTML = list.map((c) => cardHTML(c)).join("");
+  els.empty.classList.toggle("hidden", list.length > 0);
+  $("#popular-title").closest("section").classList.toggle("hidden", list.length === 0);
+  renderSide();
+}
 
-  const ERROR_MSG = "Não foi possível carregar os títulos. Verifique sua conexão e tente de novo.";
+function renderSide() {
+  const list = COMICS.filter((c) => (state.tab === "complete" ? c.complete : true)).slice(0, 7);
+  els.side.innerHTML = list.map(sideItemHTML).join("");
+}
 
-  // ---------- Carregamento das seções ----------
-  async function fill(target, path, render, placeholder) {
-    target.innerHTML = placeholder;
-    try {
-      const list = await api(path);
-      list.forEach((m) => catalog.set(m.mal_id, m));
-      target.innerHTML = list.length ? render(list) : notice("Nenhum título encontrado neste filtro.");
-    } catch {
-      target.innerHTML = notice(ERROR_MSG, true);
-    }
-  }
-
-  const typeParam = () => (state.type ? `&type=${state.type}` : "");
-
-  const SIDE_PATHS = {
-    recent: "/manga?status=publishing&order_by=start_date&sort=desc&limit=8&sfw=true",
-    complete: "/manga?status=complete&order_by=favorites&sort=desc&limit=8&sfw=true",
-  };
-
-  const loadSide = () =>
-    fill($("#side-list"), SIDE_PATHS[state.tab] + typeParam(), (l) => l.map(miniRow).join(""), skeletonRows(6));
-
-  function loadAll() {
-    const t = typeParam();
-    fill($("#popular-track"), `/top/manga?filter=publishing&limit=15${t}`, (l) => l.map((m, i) => card(m, i + 1)).join(""), skeletonCards(6));
-    fill($("#loved-track"), `/top/manga?filter=favorite&limit=15${t}`, (l) => l.map((m) => card(m)).join(""), skeletonCards(6));
-    loadSide();
-  }
-
-  // ---------- Resultados: busca e estante ----------
-  function showResults(title, html, scroll = false) {
-    $("#results-title").textContent = title;
-    $("#results-grid").innerHTML = html;
-    $("#results").hidden = false;
-    if (scroll) $("#results").scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function closeResults() {
-    state.view = null;
-    state.searchId++;
-    $("#results").hidden = true;
-  }
-
-  async function search(query, scroll = false) {
-    const id = ++state.searchId;
-    if (query.length < 2) {
-      if (state.view === "search") closeResults();
-      return;
-    }
-    state.view = "search";
-    showResults(`Resultados para “${query}”`, skeletonCards(6), scroll);
-    try {
-      const list = await api(`/manga?q=${encodeURIComponent(query)}&limit=18&sfw=true${typeParam()}`);
-      if (id !== state.searchId) return; // chegou uma busca mais recente
-      list.forEach((m) => catalog.set(m.mal_id, m));
-      $("#results-grid").innerHTML = list.length ? list.map((m) => card(m)).join("") : notice("Nada encontrado. Tente outro nome ou o título original.");
-    } catch {
-      if (id === state.searchId) $("#results-grid").innerHTML = notice(ERROR_MSG);
-    }
-  }
-
-  function showFavs() {
-    state.view = "favs";
-    state.searchId++;
-    showResults("Sua estante", state.favs.length
-      ? state.favs.map((m) => card(m)).join("")
-      : notice("Sua estante está vazia. Abra um título e escolha “Guardar na estante”."), true);
-  }
-
-  // ---------- Estante ----------
-  function toggleFav(id) {
-    const m = catalog.get(id);
-    state.favs = isFav(id) ? state.favs.filter((f) => f.mal_id !== id) : [m, ...state.favs];
-    store.set("tinteiro:favs", state.favs);
-    updateFavCount();
-    if (state.view === "favs") showFavs();
-  }
-
-  const updateFavCount = () => { $("#favs-count").textContent = state.favs.length; };
-
-  // ---------- Janela de detalhes ----------
-  const dialog = $("#detail");
-
-  function openDetail(id) {
-    const m = catalog.get(id);
-    if (!m) return;
-    const meta = [typeOf(m), statusOf(m), m.chapters && `${m.chapters} capítulos`, m.score && `nota ${m.score.toFixed(1)}`].filter(Boolean).join(", ");
-    const genres = (m.genres || []).map((g) => `<span class="tag">${esc(g.name)}</span>`).join("");
-    const authors = (m.authors || []).map((a) => a.name).join("; ");
-
-    $("#detail-body").innerHTML = `
-      <div class="detail">
-        <img class="detail-cover" src="${esc(coverOf(m))}" alt="Capa de ${esc(titleOf(m))}">
-        <div class="space-y-4">
-          <h2 id="detail-title" class="font-display pr-10 text-2xl font-extrabold">${esc(titleOf(m))}</h2>
-          <p class="muted">${esc(meta)}${authors ? `<br>${esc(authors)}` : ""}</p>
-          <div class="flex flex-wrap gap-2">${genres}</div>
-          <p class="synopsis" lang="en">${esc(m.synopsis || "Sem sinopse disponível.")}</p>
-          <div class="flex flex-wrap gap-3 pt-2">
-            <button class="btn btn-primary" data-fav="${m.mal_id}">${isFav(m.mal_id) ? "Na estante" : "Guardar na estante"}</button>
-            <a class="btn btn-ghost" href="${esc(m.url)}" target="_blank" rel="noopener">Ver ficha completa</a>
-          </div>
-        </div>
-        <button class="icon-btn detail-close" data-close aria-label="Fechar">×</button>
-      </div>`;
-    dialog.showModal();
-  }
-
-  // ---------- Tema ----------
-  function setTheme(theme) {
-    document.documentElement.dataset.theme = theme;
-    store.set("tinteiro:theme", theme);
-  }
-
-  // ---------- Eventos ----------
-  document.addEventListener("click", (e) => {
-    const el = e.target.closest("[data-open],[data-fav],[data-close],[data-retry],[data-scroll],[data-type],[data-tab]");
-    if (e.target === dialog) return dialog.close();
-    if (!el) return;
-
-    if (el.dataset.open) openDetail(Number(el.dataset.open));
-    else if (el.dataset.fav) {
-      toggleFav(Number(el.dataset.fav));
-      el.textContent = isFav(Number(el.dataset.fav)) ? "Na estante" : "Guardar na estante";
-    } else if ("close" in el.dataset) dialog.close();
-    else if ("retry" in el.dataset) loadAll();
-    else if (el.dataset.scroll) {
-      const track = $("#" + el.dataset.scroll);
-      track.scrollBy({ left: track.clientWidth * 0.85 * Number(el.dataset.dir), behavior: "smooth" });
-    } else if (el.dataset.type !== undefined) {
-      state.type = el.dataset.type;
-      $$("[data-type]").forEach((b) => b.setAttribute("aria-pressed", String(b === el)));
-      loadAll();
-    } else if (el.dataset.tab) {
-      state.tab = el.dataset.tab;
-      $$("[data-tab]").forEach((b) => b.setAttribute("aria-selected", String(b === el)));
-      loadSide();
-    }
+function updateFollowUI() {
+  els.followCount.textContent = state.follows.size;
+  els.followChip.classList.toggle("is-on", state.onlyFollowing);
+  document.querySelectorAll("[data-follow]").forEach((btn) => {
+    const on = state.follows.has(Number(btn.dataset.follow));
+    btn.classList.toggle("is-on", on);
+    btn.setAttribute("aria-pressed", on);
   });
+}
 
-  let debounce;
-  $("#search-input").addEventListener("input", (e) => {
-    clearTimeout(debounce);
-    debounce = setTimeout(() => search(e.target.value.trim()), 500);
-  });
-  $("#search-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    clearTimeout(debounce);
-    search($("#search-input").value.trim(), true);
-  });
+/* ---------- Eventos ---------- */
+els.search.addEventListener("input", (e) => {
+  state.query = e.target.value;
+  renderLists();
+  updateFollowUI();
+});
 
-  $("#favs-btn").addEventListener("click", showFavs);
-  $("#results-close").addEventListener("click", closeResults);
-  $("#theme-btn").addEventListener("click", () =>
-    setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+els.filters.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-type]");
+  if (!btn) return;
+  state.type = btn.dataset.type;
+  renderFilters();
+  renderLists();
+  updateFollowUI();
+});
 
-  // ---------- Início ----------
-  const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-  setTheme(store.get("tinteiro:theme", prefersLight ? "light" : "dark"));
-  updateFavCount();
-  loadAll();
-})();
+// Seguir/deixar de seguir: atualiza o botão no lugar, sem redesenhar (preserva o scroll do carrossel)
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-follow]");
+  if (!btn) return;
+  const id = Number(btn.dataset.follow);
+  state.follows.has(id) ? state.follows.delete(id) : state.follows.add(id);
+  save("mangara:follows", [...state.follows]);
+  updateFollowUI();
+});
+
+els.followChip.addEventListener("click", () => {
+  state.onlyFollowing = !state.onlyFollowing;
+  renderLists();
+  updateFollowUI();
+});
+
+document.querySelectorAll("[data-scroll]").forEach((btn) =>
+  btn.addEventListener("click", () => {
+    els.popular.scrollBy({ left: Number(btn.dataset.scroll) * els.popular.clientWidth * 0.8, behavior: "smooth" });
+  })
+);
+
+document.querySelectorAll("[data-tab]").forEach((btn) =>
+  btn.addEventListener("click", () => {
+    state.tab = btn.dataset.tab;
+    document.querySelectorAll("[data-tab]").forEach((b) => {
+      const active = b === btn;
+      b.classList.toggle("is-active", active);
+      b.setAttribute("aria-selected", active);
+    });
+    renderSide();
+  })
+);
+
+/* ---------- Tema ---------- */
+function applyTheme(name) {
+  document.documentElement.dataset.theme = name;
+  save("mangara:theme", name);
+}
+$("#theme-btn").addEventListener("click", () => {
+  const next = THEMES[(THEMES.indexOf(document.documentElement.dataset.theme) + 1) % THEMES.length];
+  applyTheme(next);
+});
+
+/* ---------- Início ---------- */
+applyTheme(load("mangara:theme", THEMES[0]));
+renderFilters();
+renderLists();
+updateFollowUI();
