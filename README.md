@@ -5,8 +5,8 @@ O objetivo deste estudo é avaliar o comportamento, as escolhas arquiteturais, a
 
 ## IAs Avaliadas
 
-| IA | Modelo / Versão | Código Fonte | Live Demo |
-|---|---|---|---|
+| IA | Modelo / Versão | Código Fonte 
+|---|---|---|
 | **ChatGPT** | GPT-4o | [`/src/chatgpt`](./src/chatgpt) 
 | **Claude** | Claude 3.5 Sonnet | [`/src/claude`](./src/claude)
 | **Gemini** | Gemini 1.5 Pro | [`/src/gemini`](./src/gemini) 
